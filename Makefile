@@ -2,10 +2,10 @@ CC=gcc
 CFLAGS=-Wall 
 
 build: main.o
-	$(CC) $(CFLAGS) -o allocator
+	$(CC) $(CFLAGS) main.o -o allocator
 
 main.o: main.c
-	$(CC) $(CFLAGS) -c
+	$(CC) $(CFLAGS) main.c -c
 
 clean:
 	rm -rf main.o allocator
