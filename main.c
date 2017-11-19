@@ -1,44 +1,46 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
+
 
 #define TRUE 1
 #define FALSE 0
 
 
+unsigned char *arena;
+
+
+
 void intialize(int n){
-	printf("intialize CALLED %d\n",n);
-	//TBC
+
+	arena=(unsigned char *) calloc(n,sizeof(unsigned char));
+
+
 }
 
-void finalize(){
-	printf("finalize CALLED\n");
-	//TBC
+void finalize(){	
+	free(arena);
 }
 
 void dump(){
-	printf("dump CALLED\n");
-	//TBC
+	
 }
 
 void alloc(int size){
-	printf("alloc CALLED %d\n",size);
-	//TBC
+ 
 }
 
 void custom_free(int index){
-	printf("free CALLED %d\n",index);
-	//TBC
+
 }
 
 void fill(int index, int size, int value){
-	printf("fill CALLED %d %d %d\n", index, size, value);
-	//TBC
+
 }
 
 void show(){
-	printf("show CALLED\n");
-	//TBC
+
 }
 
 
@@ -51,16 +53,21 @@ void read(){
 		if(fgets(command,20,stdin)==NULL) break;
 		
 		char *token = strtok(command,delim);
+
 		while(token != NULL){
 			
-			if(!strcmp(token, "DUMP")){
+			if(!strcmp(token, "DUMP\n")){
 				printf("%s", token);
 				dump();
 			}
-			else if(!strcmp(token, "FINALIZE")){
+			else if(!strcmp(token, "FINALIZE\n")){
 				printf("%s", token);
 				finalize();
 			}
+			else if(!strcmp(token, "FINALIZE\0")){
+				printf("%s\n", token);
+				finalize();
+			}	
 			else if(!strcmp(token, "INITIALIZE")){
 				int n;
 				printf("%s ", token);
