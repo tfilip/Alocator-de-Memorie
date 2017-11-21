@@ -7,6 +7,12 @@ unsigned char *arena;
 unsigned int n;
 int arena_index;
 
+struct block{
+    uint32_t next_index;
+    uint32_t prev_index;
+    uint32_t current_index;
+    uint32_t block_size;
+};
 
 
 void intialize(int n){
@@ -15,6 +21,7 @@ void intialize(int n){
 
 void finalize(){    
     free(arena);
+    printf("\n");
 }
 
 void dump(){
@@ -41,9 +48,52 @@ void dump(){
 
 void alloc(int size){
 
-    int i=arena_index;
-    int min=size;
-    
+    int schimbat;
+    uint32_t *int_arena=(uint32_t*)arena;
+    schimbat=0;
+    if(arena_index==0){
+        while(!schimbat){
+            //daca este primul bloc de alocat din memorie
+            if(*int_arena==0&&*(int_arena+2)==0){
+                *(int_arena+2)=size;
+                schimbat=1;
+                printf("%d\n", 12);
+                break;
+            }/*
+            //verific daca este ultima posibiltate si tot nu are loc
+            if(*(int_arena)-(arena[*(int_arena+1)])-*(int_arena+2)<size && *int_arena==0 && *int_arena+2!=0){
+                printf("TRACTOR\n" );
+                break;
+            }*/
+            //verific daca are loc
+            if(*(int_arena)-(arena[*(int_arena+1)])-*(int_arena+2)>=size){
+            
+
+                //calculez octetul la care incepe blocul pe care il aloc
+                printf("%d\n", arena[*(int_arena+1)]);
+                int octet=(arena[*(int_arena+1)])+*(int_arena+2);
+
+                //aloc zona de memorie
+                arena[octet]=*int_arena;
+                arena[octet+sizeof(int)]=arena[*(int_arena+1)];
+                arena[octet+2*sizeof(int)]=size;
+                //schimb zonele de memorie in stanga si in dreapta
+                *int_arena=octet;
+                arena[*(int_arena+1)]=octet;
+                //afisez octetul la care este zona libera de memorie
+                printf("%d\n", octet);
+                schimbat=1;
+                break;
+
+            }else{
+                //setez int_arena pe byte-ul urmatorului bloc
+                unsigned char* ptr = (unsigned char*) int_arena;
+                ptr+=*int_arena;
+                int_arena=(uint32_t*)ptr;
+
+            }
+        }
+    }
 
 
 }
@@ -155,6 +205,7 @@ invalid_command:
     printf("Invalid command: %s\n", cmd);
     exit(1);
 }
+
 
 int main(void)
 {
