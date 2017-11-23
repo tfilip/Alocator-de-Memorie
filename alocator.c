@@ -7,14 +7,6 @@ unsigned char *arena;
 unsigned int n;
 int arena_index;
 
-struct block{
-    uint32_t next_index;
-    uint32_t prev_index;
-    uint32_t current_index;
-    uint32_t block_size;
-};
-
-
 void intialize(int n){
     arena = calloc(n, sizeof(unsigned char *));
 }
@@ -25,8 +17,10 @@ void finalize(){
 }
 
 void dump(){
+
     unsigned char *i=arena;
     unsigned int k=0;
+
     while(k<n){
 
         if(k%16==0)
@@ -64,6 +58,7 @@ void alloc(int size){
 
     int schimbat, octet;
     
+
     schimbat=0;
     octet=0;
     if(arena_index==0){
@@ -120,7 +115,28 @@ void alloc(int size){
 }
 
 void custom_free(int index){
+
+    int i;
+    int block_size = arena[index-sizeof(uint32_t)] + 3*sizeof(uint32_t);
+    uint32_t* int_arena = (uint32_t*) (arena+(index-3*sizeof(uint32_t)));
     
+    //daca era primul bloc din arena
+    if(*(int_arena+1) == 0){
+        arena_index = *(int_arena);
+    }else{
+        arena[*(int_arena+1)] = *int_arena; //schimb byte-ul de next la cel din stanga daca nu este primul
+    }
+
+    //schimb byte de previous la cel din dreapta
+    arena[*(int_arena)+sizeof(uint32_t)] = *(int_arena+1);  
+    
+
+
+    //pun totul pe 0
+    unsigned char* parcurge_arena = arena+(index-3*sizeof(uint32_t));
+    for(i=0;i<block_size;i++){
+        *(parcurge_arena+i) = 0;
+    }
 }
 
 void fill(int index, int size, int value){
