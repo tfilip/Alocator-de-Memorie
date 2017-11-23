@@ -58,85 +58,52 @@ void alloc(int size){
     if(arena_index==0){
         //Parcurgere blocuri
         for(int i=0;i<n;){
+            
             uint32_t* int_arena=(uint32_t*)(arena+i);
+            
             if(*(int_arena+2) == 0){
                 //Este primul bloc de initializat 
                 *(int_arena+2) = size; //Initializez pe byte 3 marime
                 octet = i*sizeof(uint32_t)+3*sizeof(uint32_t); // Aflu pe ce octet incepe
                 schimbat=1;
+                printf("%d\n", octet);
                 break;
 
-            }else if( *(int_arena) - (i + *(int_arena+2)) >= size){         
+            }else if(*int_arena == 0 && n-(6*sizeof(uint32_t)+size+*(int_arena+2)) >= 0){ //Alloc daca e cel mai din dreapta bloc         
 
-                int right=0;
+                
+
                 int auxi=i;
-                //Verific daca este ultimul bloc din coada
-                if(*int_arena == 0 && n-(6*sizeof(uint32_t)+size+*(int_arena+2)) > 0 ){
-                    i=3*sizeof(uint32_t) + *(int_arena+2);
-                    right=1;
-                }else if( n-(6*sizeof(uint32_t)+size+*(int_arena+2)) > 00 ){
-                    //Nu mai are loc
-                    break;
-                }
-
-
-                
-                //urmatorul bloc
-                int aux1 = *int_arena;
-                //blocul curent
-                int aux2 = arena[*(int_arena+1)];
-                
-                //In cazul in care are loc -- ii aflu bitul
-                if(right)
-                    octet = i;
-                else
-                    octet = i+size;
-
-                schimbat = 1;
-
-                printf("i:%d oc:%d\n", i,octet);
-                
-
-
-                //Schimb adresele celor doua blocuri vecine
-                //STANGA
-                *(int_arena) = octet;
-
-                //DREAPTA
-                if(!right)
-                    arena[*(int_arena+1)] = octet;
-
+                int octet = i+3*sizeof(uint32_t) + *(int_arena+2);
+                schimbat = 1;                
+                //salvez blocul curent 
+               // printf("i:%d oc:%d\n", i,octet);               
+                //Schimb adresea blocului din stanga
+                *(int_arena) = octet;                
                 //Creez blocul
-                if(!right)
-                    arena[octet] = aux1;
-                else
-                    arena[octet] = 0;
+                arena[octet] = 0;
+                arena[octet+sizeof(uint32_t)] = auxi;
+                arena[octet+2*sizeof(uint32_t)] = size;          
 
-                if(right)
-                    arena[octet+sizeof(uint32_t)] = auxi;
-                else
-                    arena[octet+sizeof(uint32_t)] = aux2;
-
-                arena[octet+2*sizeof(uint32_t)] = size;
-                
-
-                //A gasit deci nu mai este nevoie sa parcurg matricea
+                printf("%d\n", octet+3*sizeof(uint32_t));
+                //A gasit deci nu mai este nevoie sa parcurg memoria
                 break;
 
             }
+            else if( n-(6*sizeof(uint32_t)+size+*(int_arena+2)) < 0 ){
+                    //Nu mai are loc la dreapta
+                    break;
+            }
             else{
-
                 //Daca nu are loc pe blocul curent ma duc la bitul de la inceputul urmatorului bloc
                 i = *(int_arena);
-
-                printf("MAAAI %d\n", i);
             }
 
 
         }
     }
 
-    printf("%d\n", octet);
+    ;
 
 
 }
