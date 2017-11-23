@@ -34,23 +34,20 @@ void dump(){
         
 
         //Sa nu mai afisez spatiul la final
-        if((k-2)&&15==0){
-            goto newline;
-        }
 
         if (k%8==0&&k!=0)
             printf(" ");
 
         
         if (k%16==0){
-            newline:  printf("\n");
+              printf("\n");
         }
 
         
     }
 
     //Daca a fost doar o linie
-    if(k==13)
+    
         printf("\n");
 
 }
@@ -185,6 +182,16 @@ void custom_free(int index){
 }
 
 void fill(int index, int size, int value){
+    unsigned char* parcurge_arena = arena+index;
+    int max_size = *(arena+index-sizeof(uint32_t));
+
+
+    for(int i=0;i<size;i++){
+        if(i>max_size)
+            break;
+        *(parcurge_arena+i) = value;
+
+    }
     
 }
 
