@@ -1,11 +1,11 @@
 CC=gcc
 CFLAGS=-Wall 
 
-build: main.o
-	$(CC) $(CFLAGS) main.o -o allocator
+build: alocator.o
+	$(CC) $(CFLAGS) $^ -o alocator
 
-main.o: main.c
-	$(CC) $(CFLAGS) main.c -c
+main.o: alocator.c
+	$(CC) $(CFLAGS) $^ -c
 
 clean:
-	rm -rf main.o allocator
+	rm -rf main.o alocator
