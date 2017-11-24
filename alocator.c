@@ -22,6 +22,8 @@ void dump(){
     unsigned char *i=arena;
     unsigned int k=0;
 
+
+
     while(k<n){
 
         if(k%16==0)
@@ -47,8 +49,8 @@ void dump(){
     }
 
     //Daca a fost doar o linie
-    
-        printf("\n");
+    if(k<=16 || n%16 != 0)
+       printf("\n");
 
 }
 
