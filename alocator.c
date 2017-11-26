@@ -119,10 +119,10 @@ void alloc(int size){
             break;
 
         }
-        else if(*int_arena == 0 && n-(6*sizeof(uint32_t)+size+*(int_arena+2)) >= 0){ //Alloc daca e cel mai din dreapta bloc         
+        else if(*int_arena == 0 &&  6*sizeof(uint32_t)+size+*(int_arena+2)+arena[*(int_arena+1)] <= n){ //Alloc daca e cel mai din dreapta bloc         
        
            // printf("GOLF R\n");
-
+           // printf("NASINA %d\n", arena[(*int_arena)]);
             int auxi=i;
             int octet = i+3*sizeof(uint32_t) + *(int_arena+2);
             schimbat = 1;                
@@ -133,14 +133,15 @@ void alloc(int size){
             //Creez blocul
             arena[octet] = 0;
             arena[octet+sizeof(uint32_t)] = auxi;
-            arena[octet+2*sizeof(uint32_t)] = size;          
+            arena[octet+2*sizeof(uint32_t)] = size;
 
+            //printf("%d NASINA\n",n-(6*sizeof(uint32_t)+size+*(int_arena+2)) );
             printf("%ld\n", octet+3*sizeof(uint32_t));
             //A gasit deci nu mai este nevoie sa parcurg memoria
             break;
 
         }
-        else if( n-(6*sizeof(uint32_t)+size+*(int_arena+2)) < 0 ){
+        else if(  6*sizeof(uint32_t)+size+*(int_arena+2)+arena[*(int_arena+1)] > n){
                 //Nu mai are loc la dreapta
                 break;
         }
@@ -185,12 +186,15 @@ void custom_free(int index){
 
 void fill(int index, int size, int value){
     unsigned char* parcurge_arena = arena+index;
+    
     int max_size = *(arena+index-sizeof(uint32_t));
 
 
     for(int i=0;i<size;i++){
-        if(i>max_size)
+        if(i>=max_size){
+            fill(arena[index-3*sizeof(uint32_t)]+3*sizeof(uint32_t),size-i,value);
             break;
+        }
         *(parcurge_arena+i) = value;
 
     }
