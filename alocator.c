@@ -166,10 +166,10 @@ void custom_free(int index){
     uint32_t* int_arena = (uint32_t*) (arena+(index-3*sizeof(uint32_t)));
     
     //daca era primul bloc din arena
-    if(*(int_arena+1) == 0){
+    if(arena_index == index-3*sizeof(uint32_t)){
         arena_index = *(int_arena);
     }else{
-        arena[*(int_arena+1)] = *int_arena; //schimb byte-ul de next la cel din stanga daca nu este primul
+        arena[*(int_arena+1)] = *(int_arena); //schimb byte-ul de next la cel din stanga daca nu este primul
     }
 
     //schimb byte de previous la cel din dreapta
