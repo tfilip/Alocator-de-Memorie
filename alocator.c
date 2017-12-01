@@ -72,7 +72,7 @@ void alloc(int size) {
         printf("%d\n", i);
         */
 
-       // printf("i:%d \n", i);
+      //  printf("i:%d \n", i);
         int32_t* int_arena = (int32_t*)(arena + i);
         int32_t* int_arena_mid = (int32_t*)(arena + *int_arena + sizeof(int32_t));
         int32_t* int_arena_urm = (int32_t*)(arena+*(int_arena+1));
@@ -90,7 +90,7 @@ void alloc(int size) {
             octet = i * sizeof(int32_t) + 3 * sizeof(int32_t); // Aflu pe ce octet incepe
             schimbat = 1;
             printf("%ld\n", octet);
-         //   printf("schimb1\n");
+       //     printf("schimb1\n");
             break;
 
             
@@ -99,7 +99,7 @@ void alloc(int size) {
         //daca nu mai are nimic in stanga verific daca are loc acolo
         else if (*(int_arena + 1) == 0 && 3 * sizeof(int32_t) + size <= arena_index ) {
 
-          //  printf("schimb2\n");
+       //    printf("schimb2\n");
 
             int_arena = (int32_t*) arena;
             *int_arena = 0;
@@ -114,7 +114,14 @@ void alloc(int size) {
         }
         else if (*int_arena == 0 &&  6 * sizeof(int32_t) + size + * (int_arena + 2) + *int_arena_urm <= n) { //Alloc daca e cel mai din dreapta bloc
 
-           // printf("schimb3 %d ",*(int_arena+2));
+            if(*int_arena_urm == 0 && arena_index !=0){
+              //  printf("ADSA\n");
+                if(6 * sizeof(int32_t) + size + * (int_arena + 2) + i > n )
+                   // printf("DASD\n");
+                    break;
+            } 
+
+        //    printf("schimb3 %d ",*(int_arena+2));
             int auxi = i;
             int octet = i + 3 * sizeof(int32_t) + *(int_arena + 2);
             schimbat = 1;
@@ -149,7 +156,7 @@ void alloc(int size) {
            // printf("muie: %d\n", *(int_arena) - arena[*(int_arena) + sizeof(int32_t)] - *(int_arena + 2) > size + 3*sizeof(int32_t) );
            // printf("s: %d\n", *(int_arena) - arena[*(int_arena) + sizeof(int32_t)] - *(int_arena + 2) );
            // printf("d: %d\n", size + 3 * sizeof(int32_t));
-           // printf("schimb4\n");
+          //  printf("schimb4\n");
             int_arena = (int32_t*) (arena + i);
             octet = i + 3*sizeof(int32_t) + *(int_arena+2);
             //savlez urmatorul bloc si blocul curent
@@ -210,7 +217,8 @@ void custom_free(int index) {
     //printf("(int arena+1) %d\n", *(int_arena+1));
 
     //schimb byte de previous la cel din dreapta
-    *int_arena_urm = *(int_arena+1);
+    if(*int_arena_urm != NULL )
+        *int_arena_urm = *(int_arena+1);
 
 
 
