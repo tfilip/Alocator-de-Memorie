@@ -22,18 +22,14 @@ void dump() {
     unsigned char *i = arena;
     unsigned int k = 0;
 
-
-
     while (k < n) {
 
         if (k % 16 == 0)
             printf("%08X\t", k);
 
-
         printf("%02X ", *i);
         i++;
         k++;
-
 
         //Sa nu mai afisez spatiul la final
 
@@ -45,7 +41,6 @@ void dump() {
             printf("\n");
         }
 
-
     }
 
     //Daca a fost doar o linie
@@ -56,50 +51,29 @@ void dump() {
 
 void alloc(int size) {
 
-
-
     int schimbat, octet;
 
-    //printf("SIZE:%d\n", size);
     schimbat = 0;
     octet = 0;
- //   int k=0;
+
     //Parcurgere blocuri
     for (int i = arena_index; i < n;) {
-       /* k++;
-        if(k>100)
-            break;
-        printf("%d\n", i);
-        */
 
-      //  printf("i:%d \n", i);
         int32_t* int_arena = (int32_t*)(arena + i);
         int32_t* int_arena_mid = (int32_t*)(arena + *int_arena + sizeof(int32_t));
-        int32_t* int_arena_urm = (int32_t*)(arena+*(int_arena+1));
-        //printf("muise s%d\n",6 * sizeof(int32_t) + size + * (int_arena + 2) + arena[*(int_arena + 1)] );
-        if (*(int_arena + 2) == 0 && *(int_arena) == 0 && *(int_arena+1) == 0  && 3 * sizeof(int32_t) + size <= n ) {
+        int32_t* int_arena_urm = (int32_t*)(arena + * (int_arena + 1));
+        if (*(int_arena + 2) == 0 && *(int_arena) == 0 && *(int_arena + 1) == 0  && 3 * sizeof(int32_t) + size <= n ) {
             //Este primul bloc de initializat
-          //  printf("0:%d\n", *(int_arena));
-          //  printf("1:%d\n", *(int_arena+1));
-          //  printf("2:%d\n", *(int_arena+2));
-
-            //if(arena[*int_arena+2*sizeof(int32_t)] != 0)
-              //  break;
 
             *(int_arena + 2) = size; //Initializez pe byte 3 marime
             octet = i * sizeof(int32_t) + 3 * sizeof(int32_t); // Aflu pe ce octet incepe
             schimbat = 1;
-            printf("%ld\n", octet);
-       //     printf("schimb1\n");
+            printf("%d\n", octet);
             break;
-
-            
 
         }
         //daca nu mai are nimic in stanga verific daca are loc acolo
         else if (*(int_arena + 1) == 0 && 3 * sizeof(int32_t) + size <= arena_index ) {
-
-       //    printf("schimb2\n");
 
             int_arena = (int32_t*) arena;
             *int_arena = 0;
@@ -114,67 +88,48 @@ void alloc(int size) {
         }
         else if (*int_arena == 0 &&  6 * sizeof(int32_t) + size + * (int_arena + 2) + *int_arena_urm <= n) { //Alloc daca e cel mai din dreapta bloc
 
-            if(*int_arena_urm == 0 && arena_index !=0){
-              //  printf("ADSA\n");
-                if(6 * sizeof(int32_t) + size + * (int_arena + 2) + i > n )
-                   // printf("DASD\n");
+            if (*int_arena_urm == 0 && arena_index != 0) {
+                if (6 * sizeof(int32_t) + size + * (int_arena + 2) + i > n )
                     break;
-            } 
+            }
 
-        //    printf("schimb3 %d ",*(int_arena+2));
             int auxi = i;
             int octet = i + 3 * sizeof(int32_t) + *(int_arena + 2);
             schimbat = 1;
 
-          //  printf("size: %d\n", size);
-
-           // printf("octet: %d\n", octet);
 
             *(int_arena) = octet;
             //Creez blocul
             int_arena = (int32_t*) (arena + octet);
             *int_arena = 0;
-            *(int_arena+1) = auxi;
-            *(int_arena+2) = size;
-           // printf("DAS\n");
+            *(int_arena + 1) = auxi;
+            *(int_arena + 2) = size;
             printf("%ld\n", octet + 3 * sizeof(int32_t));
             //A gasit deci nu mai este nevoie sa parcurg memoria
             break;
 
         }
 
-         else if (  6 * sizeof(int32_t) + size + * (int_arena + 2) + *int_arena_urm > n && *int_arena == 0) {
+        else if (  6 * sizeof(int32_t) + size + * (int_arena + 2) + *int_arena_urm > n && *int_arena == 0) {
             //Nu mai are loc la dreapta
-            //printf("nu am loc\n");
             break;
         }
         // verifc daca are loc intre doua blocuri
-        else if ((int32_t) (*(int_arena) -  *int_arena_mid - *(int_arena + 2)) >=(int32_t)((int32_t) size + (int32_t) 6 * sizeof(int32_t))) {
-            
-           // printf("hai sa ma joc%d\n", *int_arena_mid);
+        else if ((int32_t) (*(int_arena) -  *int_arena_mid - * (int_arena + 2)) >= (int32_t)((int32_t) size + (int32_t) 6 * sizeof(int32_t))) {
 
-           // printf("muie: %d\n", *(int_arena) - arena[*(int_arena) + sizeof(int32_t)] - *(int_arena + 2) > size + 3*sizeof(int32_t) );
-           // printf("s: %d\n", *(int_arena) - arena[*(int_arena) + sizeof(int32_t)] - *(int_arena + 2) );
-           // printf("d: %d\n", size + 3 * sizeof(int32_t));
-          //  printf("schimb4\n");
             int_arena = (int32_t*) (arena + i);
-            octet = i + 3*sizeof(int32_t) + *(int_arena+2);
+            octet = i + 3 * sizeof(int32_t) + *(int_arena + 2);
             //savlez urmatorul bloc si blocul curent
-
-           // printf("CASSA LOCO%d\n", *(int_arena));
 
             int next = *(int_arena);
             int prev =  i;
 
-            int32_t* int_arena_next = (int32_t*)(arena+next+sizeof(int32_t));
+            int32_t* int_arena_next = (int32_t*)(arena + next + sizeof(int32_t));
 
-             //printf("nest %d\n", next);
-
-            //printf("octet :%d\n", octet);
             //pun ca next block fix ce urmeaza dupa acesta
             *(int_arena) = octet;
-            //pun previous la urmatorul blocul 
-            *int_arena_next = octet; 
+            //pun previous la urmatorul blocul
+            *int_arena_next = octet;
 
             int_arena = (int32_t*) (arena + octet);
             //Aloc blocul
@@ -182,46 +137,37 @@ void alloc(int size) {
             *(int_arena + 1) = prev;
             *(int_arena + 2) = size;
             schimbat = 1;
-          //  printf("DAI MA\n");
             printf("%ld\n", octet + 3 * sizeof(int32_t) );
             break;
 
         }
         else {
             //Daca nu are loc pe blocul curent ma duc la bitul de la inceputul urmatorului bloc
-          //  printf("NU AM LOC\n");
             i = *(int_arena);
         }
 
-
     }
 
-    if (!schimbat){
-       // printf("NU AM SCHIMBAT\n");
+    if (!schimbat) {
         printf("%d\n", 0);
     }
-
-   //dump();
 
 }
 
 void custom_free(int index) {
 
     int i;
-    int* int_arena_block_size = (int32_t*)(arena+index-sizeof(int32_t));
+    int* int_arena_block_size = (int32_t*)(arena + index - sizeof(int32_t));
     int block_size = *int_arena_block_size + 3 * sizeof(int32_t);
     int32_t* int_arena = (int32_t*) (arena + (index - 3 * sizeof(int32_t)));
-    int32_t* int_arena_urm = (int32_t*)(arena+*(int_arena)+sizeof(int32_t));
-    int32_t* int_arena_urmatorul = (int32_t*)(arena+*(int_arena+1));
+    int32_t* int_arena_urm = (int32_t*)(arena + * (int_arena) + sizeof(int32_t));
+    int32_t* int_arena_urmatorul = (int32_t*)(arena + * (int_arena + 1));
 
-    //printf("(int arena+1) %d\n", *(int_arena+1));
 
     //schimb byte de previous la cel din dreapta
-    if(*int_arena_urm != NULL )
-        *int_arena_urm = *(int_arena+1);
-
-
-
+    if (*int_arena_urm != '\0' ) {
+        *int_arena_urm = *(int_arena + 1);
+    }
 
     //daca era primul bloc din arena
     if (arena_index == (index - 3 * sizeof(int32_t))) {
@@ -229,8 +175,6 @@ void custom_free(int index) {
     } else {
         *int_arena_urmatorul = *(int_arena); //schimb byte-ul de next la cel din stanga daca nu este primul
     }
-
-
 
     //pun totul pe 0
     unsigned char* parcurge_arena = arena + (index - 3 * sizeof(int32_t));
@@ -240,37 +184,25 @@ void custom_free(int index) {
 }
 
 void fill(int index, int size, int value) {
-    
-    //printf("INDEX:%d\n", index);
 
-   // unsigned char* parcurge_arena = (arena + index);
+    // unsigned char* parcurge_arena = (arena + index);
 
-    int32_t* int_arena_max = (int32_t*) (arena+index-sizeof(int32_t));
-    int32_t* int_arena_next = (int32_t*)(arena+index-3*sizeof(int32_t));
+    int32_t* int_arena_max = (int32_t*) (arena + index - sizeof(int32_t));
+    int32_t* int_arena_next = (int32_t*)(arena + index - 3 * sizeof(int32_t));
 
     int max_size = *int_arena_max;
 
-    //printf("MAX SIZE %d\n", *int_arena_max);
-
-    *(arena+index) = value;
-    //printf("next %d\n", *int_arena_next+3*sizeof(int32_t));
+    *(arena + index) = value;
     for (int i = 0; i < size; i++) {
-       
+
         if (i >= max_size  ) {
-          //  printf("DAS %d \n", i);
-          //  break;
-            if(*int_arena_next == 0)
+            if (*int_arena_next == 0)
                 break;
             fill(*int_arena_next + 3 * sizeof(int32_t), size - i, value);
             break;
         }
 
-        *(arena+index+i) = value;
-
-
-     
-
-
+        *(arena + index + i) = value;
 
     }
 
@@ -338,7 +270,7 @@ void parse_command(char* cmd)
         int32_t value = atoi(value_str);
         fill(index, size, value);
 
-    } else if (strcmp(cmd_name, "ALLOCALIGNED") == 0) {
+    }/* else if (strcmp(cmd_name, "ALLOCALIGNED") == 0) {
         char* size_str = strtok(NULL, delims);
         if (!size_str) {
             goto invalid_command;
@@ -365,7 +297,7 @@ void parse_command(char* cmd)
         int32_t size = atoi(size_str);
         // TODO - REALLOC
 
-    } else {
+    }*/ else {
         goto invalid_command;
     }
 
@@ -379,9 +311,6 @@ invalid_command:
 
 int main(void)
 {
-
-   // printf("%d\n", sizeof(int32_t));
-   // printf("%d\n", sizeof(int32_t));
 
     size_t read;
     char* line = NULL;
