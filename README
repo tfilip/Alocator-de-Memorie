@@ -4,4 +4,28 @@
 TEMA 2
 
 
+	Pentru o accesare mai facila din intreg programul a salvat in variabile globale arena, marimea arenei si indexul arenei. Astfel arena este salvata de tip unsigned char * deoarce astfel pot accesta byte cu byte intreaga arena. Pe parcursul progamului am utlizat castarea la tipul int32_t* pentru a accesa 4 bytes (blocurile de gestiune spre exemplu). Am folosit int32_t in loc de uint32_t deoarece in implementarea mea faceam scaderi de unsigned ce dadeau un rezultat negativ, astfel am elminat o problema. M-am utilizat de functiile din stdlib doar in intializarea arenei si in eliberarea acesteia din memorie, totodata am utilizat scheletul pentru citire.
 
+	Functia ALLOC
+
+	Functia alloc se bazeaza pe o parcurgere a arenei din bloc in bloc, existand cazuri speciale pentru primul bloc si cazul in care indexul arenei este diferit de 0, verificandu-se in acest caz daca are loc la stanga. Daca nu intra in niciunul din aceste cazuri, verfica daca este cel mai din dreapta bloc, iar in acel caz verifica daca are loc sa puna blocul. Daca nu este cel mai din dreapta bloc si nici nu a intrat intr-un caz special, acesta verifica daca ar avea loc intre doua blocuri, in caz contrar returneaza 0. La fiecare alocare a unui bloc am grija sa schimb sectiuniile de gestiune a blocurilor vecine. 
+
+	Functia FREE
+
+	In functia free se duce byte cu byte de la inceputul zonei de gestiune pana la finalul blocului si seteaza totul pe 0, apoi verifica daca este cazul sa schimbe ceva la blocurile vecine in zona acestora de gestiune. Totodata aici se schimba si index-ul arenei, daca era primul bloc din arena.
+
+
+	Functia FILL
+	
+	Incepe de la fiecare zona alocata unui bloc si sare la celalat bloc in cazul in care mai trebuie sa umple. Verifica daca a ajuns la ultimul bloc din arena pentru a nu se duce la incepulul arenei si a umple zone de memorie anterioare indexului dat ca parametru.
+
+
+
+	FUNCTIA DUMP
+
+	Aceasta foloseste %08X si %02X pentru a converti automat in format hexazecimal.
+
+
+	INITIALIZE & FINALIZE
+
+	Se foloseste de implementarile standard alea librariei stdlib pentru a aloca zona de memorie in care implementez alocatorul de memorie.
